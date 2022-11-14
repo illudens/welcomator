@@ -29,23 +29,26 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Welcomator debugger messaging...");
 
-  if (! audio.begin()) { // initialise the music player
+  if (!audio.begin()) { // initialise the music player
      Serial.println(F("Couldn't find Music Shield, do you have the right pins defined?"));
      while (1);
   }
   Serial.println(F("Music Shield found"));
   
-   if (!SD.begin(CARDCS)) {
+  if (!SD.begin(CARDCS)) {
     Serial.println(F("SD Card failed, or not present"));
     while (1);  // don't do anything more
   }
- 
+  Serial.println(F("SD card found"));
+  
   // Set volume for left, right channels. lower numbers == louder volume!
-  audio.setVolume(20,20);
+  audio.setVolume(20, 20);
 
   // If DREQ is on an interrupt pin (on uno, #2 or #3) we can do background
   // audio playing
   audio.useInterrupt(VS1053_FILEPLAYER_PIN_INT);  // DREQ int
+
+  audio.startPlayingFile("/sparkle2.ogg");
 }
 
 void loop() {
@@ -56,16 +59,18 @@ void loop() {
   
   if (currentDetectionState_Right && !previousDetectionState_Right)
   {
+    Serial.println(F("Right eye detection"));
     audio.startPlayingFile("/ill_be.mp3");
   }
 
   if (currentDetectionState_Left && !previousDetectionState_Left)
   {
+    Serial.println(F("Left eye detection"));
     audio.startPlayingFile("/back.mp3");
   } 
 
   previousDetectionState_Right = currentDetectionState_Right;
   previousDetectionState_Left = currentDetectionState_Left;
 
-  delay(5000);
+  delay(1000);
 }
